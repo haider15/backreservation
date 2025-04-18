@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    http {
+      upstream user_service {
+        server user-service:3001;
+      }
+      upstream salle_service {
+        server salle-service:3002;
+      }
+      upstream reservation_service {
+        server reservation-service:3003;
+      }
+      server {
+        listen 80;
+        location /user-service {
+          proxy_pass http://user_service;
+        }
+        location /salle-service {
+          proxy_pass http://salle_service;
+        }
+        location /reservation-service {
+          proxy_pass http://reservation_service;
+        }
+      }
+    }
