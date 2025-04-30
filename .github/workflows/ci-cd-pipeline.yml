@@ -21,8 +21,8 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: haider693  # Ton nom d'utilisateur Docker Hub
-        password: ${{ secrets.DOCKERHUB_TOKEN }}  # Utiliser le secret DockerHub token
+        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Utilise le secret DockerHub username
+        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Utilise le secret DockerHub token
 
     # Construction et push de l'image pour chaque microservice
     - name: Build and push user-service Docker image
@@ -30,21 +30,21 @@ jobs:
       with:
         context: ./user-service  # Répertoire où se trouve ton Dockerfile pour le service utilisateur
         push: true
-        tags: haider693/user-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/user-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push salle-service Docker image
       uses: docker/build-push-action@v2
       with:
         context: ./salle-service  # Répertoire où se trouve ton Dockerfile pour le service salle
         push: true
-        tags: haider693/salle-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/salle-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push reservation-service Docker image
       uses: docker/build-push-action@v2
       with:
         context: ./reservation-service  # Répertoire où se trouve ton Dockerfile pour le service réservation
         push: true
-        tags: haider693/reservation-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/reservation-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Logout from Docker Hub
       run: docker logout
@@ -74,6 +74,6 @@ jobs:
     # Déployer avec Helm
     - name: Helm Upgrade/Install
       run: |
-        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=haider693/user-service,image.tag=latest
-        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=haider693/salle-service,image.tag=latest
-        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider693/reservation-service,image.tag=latest
+        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/user-service,image.tag=latest
+        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/salle-service,image.tag=latest
+        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/reservation-service,image.tag=latest
