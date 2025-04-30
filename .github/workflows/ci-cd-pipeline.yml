@@ -21,30 +21,30 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Utilise le secret DockerHub username
+        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Utilise le secret DockerHub token
 
     # Construction et push de l'image pour chaque microservice
     - name: Build and push user-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./user-service
+        context: ./user-service  # Répertoire où se trouve ton Dockerfile pour le service utilisateur
         push: true
-        tags: haider693/user-service:latest
+        tags: haider693/user-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push salle-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./salle-service
+        context: ./salle-service  # Répertoire où se trouve ton Dockerfile pour le service salle
         push: true
-        tags: haider693/salle-service:latest
+        tags: haider693/salle-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push reservation-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./reservation-service
+        context: ./reservation-service  # Répertoire où se trouve ton Dockerfile pour le service réservation
         push: true
-        tags: haider693/reservation-service:latest
+        tags: haider693/reservation-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Logout from Docker Hub
       run: docker logout
@@ -52,7 +52,6 @@ jobs:
   deploy-to-kubernetes:
     runs-on: ubuntu-latest
     needs: docker-build-push
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -67,10 +66,10 @@ jobs:
       with:
         kubectl-version: 'latest'
 
-    # Configurer kubeconfig
+    # Configurer kubeconfig (assurez-vous d'avoir les secrets Kubernetes)
     - name: Configure kubeconfig
       run: |
-        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config  # Assurez-vous que ce secret existe dans votre dépôt GitHub
 
     # Déployer avec Helm
     - name: Helm Upgrade/Install
