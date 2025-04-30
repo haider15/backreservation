@@ -69,7 +69,6 @@ jobs:
     # Configurer kubeconfig (assurez-vous d'avoir les secrets Kubernetes)
     - name: Configure kubeconfig
       run: |
-        mkdir -p $HOME/.kube  # Crée le répertoire .kube
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config  # Assurez-vous que ce secret existe dans votre dépôt GitHub
 
     # Déployer avec Helm
