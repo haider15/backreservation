@@ -30,21 +30,21 @@ jobs:
       with:
         context: ./user-service  # Répertoire où se trouve ton Dockerfile pour le service utilisateur
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/user-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider15/user-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push salle-service Docker image
       uses: docker/build-push-action@v2
       with:
         context: ./salle-service  # Répertoire où se trouve ton Dockerfile pour le service salle
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/salle-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider15/salle-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push reservation-service Docker image
       uses: docker/build-push-action@v2
       with:
         context: ./reservation-service  # Répertoire où se trouve ton Dockerfile pour le service réservation
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/reservation-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider15/reservation-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Logout from Docker Hub
       run: docker logout
@@ -74,6 +74,6 @@ jobs:
     # Déployer avec Helm
     - name: Helm Upgrade/Install
       run: |
-        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/user-service,image.tag=latest
-        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/salle-service,image.tag=latest
-        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=${{ secrets.DOCKERHUB_USERNAME }}/reservation-service,image.tag=latest
+        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=haider15/user-service,image.tag=latest
+        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=haider15/salle-service,image.tag=latest
+        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider15/reservation-service,image.tag=latest
