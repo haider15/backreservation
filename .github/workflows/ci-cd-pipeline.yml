@@ -22,7 +22,7 @@ jobs:
       uses: docker/login-action@v2
       with:
         username: haider693  # Ton nom d'utilisateur Docker Hub
-        password: dckr_pat_bzWN0nl1QAnYTZwtv-dAu4hYiAw  # Ton token Docker Hub
+        password: ${{ secrets.DOCKERHUB_TOKEN }}  # Utiliser le secret DockerHub token
 
     # Construction et push de l'image pour chaque microservice
     - name: Build and push user-service Docker image
