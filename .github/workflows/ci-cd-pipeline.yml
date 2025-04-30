@@ -21,45 +21,28 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-<<<<<<< HEAD
         username: ${{ secrets.DOCKERHUB_USERNAME }}  # Utilise le secret DockerHub username
         password: ${{ secrets.DOCKERHUB_TOKEN }}     # Utilise le secret DockerHub token
-=======
-        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Utiliser votre secret DockerHub username
-        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Utiliser votre secret DockerHub token
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
 
     # Construction et push de l'image pour chaque microservice
     - name: Build and push user-service Docker image
       uses: docker/build-push-action@v2
       with:
-<<<<<<< HEAD
         context: ./user-service  # Répertoire où se trouve ton Dockerfile pour le service utilisateur
-=======
-        context: ./user-service  # Répertoire où se trouve votre Dockerfile pour le service utilisateur
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
         push: true
         tags: haider693/user-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push salle-service Docker image
       uses: docker/build-push-action@v2
       with:
-<<<<<<< HEAD
         context: ./salle-service  # Répertoire où se trouve ton Dockerfile pour le service salle
-=======
-        context: ./salle-service  # Répertoire où se trouve votre Dockerfile pour le service salle
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
         push: true
         tags: haider693/salle-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Build and push reservation-service Docker image
       uses: docker/build-push-action@v2
       with:
-<<<<<<< HEAD
         context: ./reservation-service  # Répertoire où se trouve ton Dockerfile pour le service réservation
-=======
-        context: ./reservation-service  # Répertoire où se trouve votre Dockerfile pour le service réservation
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
         push: true
         tags: haider693/reservation-service:latest  # Tag de l'image Docker sur DockerHub
 
@@ -86,10 +69,7 @@ jobs:
     # Configurer kubeconfig (assurez-vous d'avoir les secrets Kubernetes)
     - name: Configure kubeconfig
       run: |
-<<<<<<< HEAD
         mkdir -p $HOME/.kube  # Crée le répertoire .kube
-=======
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config  # Assurez-vous que ce secret existe dans votre dépôt GitHub
 
     # Déployer avec Helm
@@ -97,8 +77,4 @@ jobs:
       run: |
         helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=haider693/user-service,image.tag=latest
         helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=haider693/salle-service,image.tag=latest
-<<<<<<< HEAD
         helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider693/reservation-service,image.tag=latest
-=======
-        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider693/reservation-service,image.tag=latest
->>>>>>> 30613e8 (Ajout des fichiers .env à .gitignore  drerinere)
