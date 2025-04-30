@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Configuration de Docker Buildx
     - name: Set up Docker Buildx
@@ -21,30 +21,30 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Utilise le secret DockerHub username
-        password: ${{ secrets.DOCKERHUB_TOKEN }}     # Utilise le secret DockerHub token
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     # Construction et push de l'image pour chaque microservice
     - name: Build and push user-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./user-service  # Répertoire où se trouve ton Dockerfile pour le service utilisateur
+        context: ./user-service
         push: true
-        tags: haider693/user-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider693/user-service:latest
 
     - name: Build and push salle-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./salle-service  # Répertoire où se trouve ton Dockerfile pour le service salle
+        context: ./salle-service
         push: true
-        tags: haider693/salle-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider693/salle-service:latest
 
     - name: Build and push reservation-service Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./reservation-service  # Répertoire où se trouve ton Dockerfile pour le service réservation
+        context: ./reservation-service
         push: true
-        tags: haider693/reservation-service:latest  # Tag de l'image Docker sur DockerHub
+        tags: haider693/reservation-service:latest
 
     - name: Logout from Docker Hub
       run: docker logout
@@ -54,7 +54,7 @@ jobs:
     needs: docker-build-push
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Installer Helm
     - name: Set up Helm
@@ -66,15 +66,19 @@ jobs:
       with:
         kubectl-version: 'latest'
 
-    # Configurer kubeconfig (assurez-vous d'avoir les secrets Kubernetes)
+    # Configurer kubeconfig
     - name: Configure kubeconfig
       run: |
-        mkdir -p $HOME/.kube  # Crée le répertoire .kube
-        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config  # Assurez-vous que ce secret existe dans votre dépôt GitHub
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+    # Vérifier la connexion au cluster Kubernetes
+    - name: Check Kubernetes cluster connection
+      run: kubectl get nodes
 
     # Déployer avec Helm
     - name: Helm Upgrade/Install
       run: |
-        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=haider693/user-service,image.tag=latest
-        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=haider693/salle-service,image.tag=latest
-        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider693/reservation-service,image.tag=latest
+        helm upgrade --install user-service ./helm/user-service --namespace default --set image.repository=haider693/user-service,image.tag=latest --wait
+        helm upgrade --install salle-service ./helm/salle-service --namespace default --set image.repository=haider693/salle-service,image.tag=latest --wait
+        helm upgrade --install reservation-service ./helm/reservation-service --namespace default --set image.repository=haider693/reservation-service,image.tag=latest --wait
