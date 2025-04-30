@@ -1,0 +1,6 @@
+apiVersion: v2
+name: salle-service
+description: A Helm chart for deploying the Salle Service
+type: application
+version: 0.1.0
+appVersion: "1.0"

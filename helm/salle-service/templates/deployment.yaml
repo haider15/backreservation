@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salle-service
+  labels:
+    app: salle-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salle-service
+  template:
+    metadata:
+      labels:
+        app: salle-service
+    spec:
+      containers:
+        - name: salle-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 80
