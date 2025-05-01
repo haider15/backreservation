@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
@@ -14,7 +12,6 @@ services:
       - ./user-service/sql/init.sql:/docker-entrypoint-initdb.d/01-init-user.sql
       - ./salle-service/sql/init.sql:/docker-entrypoint-initdb.d/02-init-salle.sql
       - ./reservation-service/sql/init.sql:/docker-entrypoint-initdb.d/03-init-reservation.sql
-
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
@@ -75,11 +72,12 @@ services:
     environment:
       DB_HOST: mysql
       KAFKA_BROKER: kafka:9092
+
   reservation-service:
     build: ./reservation-service
     container_name: reservation-service
     ports:
-      - "3003:3003"  # Change le port ici si nécessaire
+      - "3003:3003"
     depends_on:
       mysql:
         condition: service_healthy
@@ -89,5 +87,36 @@ services:
       DB_HOST: mysql
       KAFKA_BROKER: kafka:9092
 
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_JDBC_URL=jdbc:postgresql://sonar-db:5432/sonar
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+      - SONAR_JAVA_OPTS=-Djava.library.path=/opt/sonarqube/lib/native
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    depends_on:
+      - sonar-db
+
+  sonar-db:
+    image: postgres:13
+    container_name: sonar_db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - sonar_postgres_data:/var/lib/postgresql/data
+
 volumes:
   mysql_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonar_postgres_data:
