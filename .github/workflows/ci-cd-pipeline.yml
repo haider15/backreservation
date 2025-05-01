@@ -47,12 +47,7 @@ jobs:
         tags: haider693/reservation-service:latest  # Tag de l'image Docker sur DockerHub
 
     - name: Logout from Docker Hub
-      run: docker logou
-  
-
-
-
-
+      run: docker logout
 
   deploy-to-kubernetes:
     runs-on: ubuntu-latest
